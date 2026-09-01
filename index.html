@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aura Detector — NexaSoul</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<!-- Space-themed fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<canvas id="bg3d"></canvas>
+<div class="grid-overlay"></div>
+
+<!-- =========================================================
+     SVG ICON LIBRARY
+     ========================================================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-planet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(-25 12 12)"/></symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
+    <symbol id="i-satellite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l3-3 3 3-3 3z"/><path d="M16 8l3-3 3 3-3 3z"/><path d="M8 12l4 4M12 8l4 4"/><path d="M9 21a9 9 0 0 0 9-9"/><path d="M5 17a13 13 0 0 0 13-13"/></symbol>
+    <symbol id="i-ufo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="10" ry="3"/><path d="M7 12a5 5 0 0 1 10 0"/><circle cx="9" cy="10" r="0.5" fill="currentColor"/><circle cx="12" cy="9.5" r="0.5" fill="currentColor"/><circle cx="15" cy="10" r="0.5" fill="currentColor"/><path d="M5 15l-2 4M19 15l2 4M12 15v4"/></symbol>
+    <symbol id="i-galaxy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2a10 10 0 0 1 8 4c-3 2-6 3-10 3s-7-1-10-3a10 10 0 0 1 12-4z"/><path d="M12 22a10 10 0 0 1-8-4c3-2 6-3 10-3s7 1 10 3a10 10 0 0 1-12 4z"/></symbol>
+    <symbol id="i-comet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="7" r="4"/><path d="M14 10l-9 9M12 12l-4 6M15 13l-3 5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.72 3h16.92a2 2 0 0 0 1.72-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l4 10h12l4-10-6 4-4-7-4 7z"/><path d="M4 20h16"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></symbol>
+    <symbol id="i-diamond" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3 8 9l4 12 4-12-3-6"/><path d="M2 9h20"/></symbol>
+    <symbol id="i-medal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="6"/><path d="M8 3l4 6 4-6"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13M5 12v9h14v-9"/><path d="M12 8s-2-4-4-4a2 2 0 0 0 0 4h4z"/><path d="M12 8s2-4 4-4a2 2 0 0 1 0 4h-4z"/></symbol>
+    <symbol id="i-scroll" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h11a2 2 0 0 0 2-2v-1h-8v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 0-4 0v14"/><path d="M18 3h-6a2 2 0 0 0-2 2v13"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="nav-in">
+      <div class="brand">
+        <!-- LOGO ICON + TEXT NEXT TO IT -->
+        <img src="assets/logo.png" alt="Logo" class="brand-logo-img">
+        <span class="brand-text">NEXASOUL</span>
+      </div>
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#challenge">Challenge</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container main-app-zone">
+    <!-- HERO SECTION -->
+    <section class="hero" id="hero">
+      <div class="badge"><i></i> Live Energy Scanner Active</div>
+
+      <div class="cage-scene" id="cageScene">
+        <div class="outer-ring r1"></div>
+        <div class="outer-ring r2"></div>
+        <div class="outer-ring r3"></div>
+        <div class="aura-glow"></div>
+        <span class="leak l1"></span>
+        <span class="leak l2"></span>
+        <span class="leak l3"></span>
+        <span class="leak l4"></span>
+        <div class="cage">
+          <div class="mrng" style="transform:rotateY(0deg)"></div>
+          <div class="mrng" style="transform:rotateY(30deg)"></div>
+          <div class="mrng" style="transform:rotateY(60deg)"></div>
+          <div class="mrng" style="transform:rotateY(90deg)"></div>
+          <div class="mrng" style="transform:rotateY(120deg)"></div>
+          <div class="mrng" style="transform:rotateY(150deg)"></div>
+          <div class="lrng" style="transform:rotateX(90deg) translateZ(0px) scale(1)"></div>
+          <div class="lrng" style="transform:rotateX(90deg) translateZ(60px) scale(.85)"></div>
+          <div class="lrng" style="transform:rotateX(90deg) translateZ(-60px) scale(.85)"></div>
+        </div>
+        <div class="orb-inner">
+          <span class="icon-swap" id="innerIcon">
+            <svg width="60" height="60"><use href="#i-planet"/></svg>
+          </span>
+        </div>
+        <span class="escape e1"><svg width="22" height="22"><use href="#i-rocket"/></svg></span>
+        <span class="escape e2"><svg width="22" height="22"><use href="#i-satellite"/></svg></span>
+        <span class="escape e3"><svg width="22" height="22"><use href="#i-galaxy"/></svg></span>
+        <span class="escape e4"><svg width="22" height="22"><use href="#i-ufo"/></svg></span>
+      </div>
+
+      <div class="chips">
+        <span class="chip"><span class="ic"><svg width="14" height="14"><use href="#i-galaxy"/></svg></span> Vibe Scan</span>
+        <span class="chip"><span class="ic"><svg width="14" height="14"><use href="#i-rocket"/></svg></span> Gen-Z Energy</span>
+        <span class="chip"><span class="ic"><svg width="14" height="14"><use href="#i-planet"/></svg></span> Aura Score</span>
+      </div>
+
+      <h1 class="title">AURA <span class="accent">DETECTOR</span></h1>
+      <p class="sub">Answer 10 questions and discover your true Gen-Z aura tier.</p>
+      <button class="btn btn-main" id="startBtn">
+        Start Aura Test
+        <span class="ic"><svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+      </button>
+    </section>
+
+    <!-- QUIZ SECTION -->
+    <section id="quiz" class="hidden">
+      <div class="card card-uniform" id="quizCard">
+        <div class="q-badge">
+          <span class="ic"><svg width="12" height="12"><use href="#i-satellite"/></svg></span>
+          Aura Scan In Progress
+        </div>
+        <div class="meta">
+          <span>Question <b id="qNum">01</b> of 10</span>
+          <b id="qPct">0%</b>
+        </div>
+        <div class="track"><div class="fill" id="bar"></div></div>
+        
+        <div class="q" id="qText">...</div>
+        <div class="opts" id="opts"></div>
+        
+        <div class="foot">
+          <span class="warn hidden" id="warn">
+            <span class="ic"><svg width="16" height="16"><use href="#i-warn"/></svg></span>
+            Select an option to continue
+          </span>
+          <span></span>
+          <button class="btn btn-main" id="nextBtn">
+            <span id="nextText">Next</span>
+            <span class="ic"><svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT SECTION -->
+    <section id="result" class="hidden">
+      <div class="card card-uniform result">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+  </div>
+
+  <!-- ==========================================
+       SEPARATE INFO SECTIONS (About & Challenge)
+       ========================================== -->
+  <div class="info-zone">
+    <div class="info-zone-divider"></div>
+    <div class="container">
+      
+      <!-- ABOUT -->
+      <section id="about" class="info-section">
+        <div class="card card-uniform info-card">
+          <h2><span class="ic"><svg width="24" height="24"><use href="#i-galaxy"/></svg></span> About This Project</h2>
+          <p>The reference project for the <strong>NexaSoul Web Development Foundation Bootcamp</strong>.</p>
+          <div class="phase-box">
+            <p><strong>Phase 1:</strong> Build the base with HTML, CSS & JS (AI-assisted).</p>
+            <p><strong>Phase 2:</strong> Redesign it into the most creative UI/UX masterwork.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHALLENGE -->
+      <section id="challenge" class="info-section">
+        <div class="card card-uniform info-card">
+          <h2><span class="ic"><svg width="24" height="24"><use href="#i-rocket"/></svg></span> UI/UX Challenge</h2>
+          <p>Redesign & edit the Aura Detector. The most creative, refined, and visually polished version wins.</p>
+          <div class="perks">
+            <div class="perk"><span class="perk-ic"><svg width="18" height="18"><use href="#i-crown"/></svg></span> Coolest UI/UX Winner</div>
+            <div class="perk"><span class="perk-ic"><svg width="18" height="18"><use href="#i-medal"/></svg></span> Recognition & Glory</div>
+            <div class="perk"><span class="perk-ic"><svg width="18" height="18"><use href="#i-gift"/></svg></span> Exclusive Goodies</div>
+            <div class="perk"><span class="perk-ic"><svg width="18" height="18"><use href="#i-scroll"/></svg></span> Certificate of Merit</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <h3>
+      <img src="assets/logo.png" alt="Logo" class="brand-logo-img">
+      <span class="brand-text">NEXASOUL</span>
+    </h3>
+    <p>Frontend × Full Stack Development Club</p>
+    <p>Chandigarh University</p>
+    <p class="motto">Code · Connect · Conquer</p>
+  </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
